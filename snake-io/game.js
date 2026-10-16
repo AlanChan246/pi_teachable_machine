@@ -363,9 +363,18 @@
         y = rand(200, WORLD - 200);
       } while (player && Math.hypot(x - player.segments[0].x, y - player.segments[0].y) < 500);
 
+      const taken = new Set(snakes.filter((s) => s.alive).map((s) => s.name));
+      let name = pick(NAMES);
+      for (let n = 0; n < NAMES.length; n++) {
+        const candidate = NAMES[(NAMES.indexOf(name) + n) % NAMES.length];
+        if (!taken.has(candidate)) {
+          name = candidate;
+          break;
+        }
+      }
       snakes.push(
         createSnake({
-          name: pick(NAMES),
+          name,
           color: pick(COLORS),
           x,
           y,
@@ -618,6 +627,7 @@
   }
 
   function startGame() {
+    if (running && player && player.alive) return;
     resetGame();
     setPlayingUI(true);
   }
@@ -669,8 +679,30 @@
     if (e.code === "Space") boosting = false;
   });
 
-  playBtn.addEventListener("click", startGame);
-  retryBtn.addEventListener("click", startGame);
+  playBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    startGame();
+  });
+  retryBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    startGame();
+  });
+
+  // Whole menu surface starts a run (helps when the CTA miss-clicks)
+  startScreen.addEventListener("click", () => {
+    if (!startScreen.hidden) startGame();
+  });
+  overScreen.addEventListener("click", () => {
+    if (!overScreen.hidden) startGame();
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.code !== "Enter") return;
+    if (!startScreen.hidden || !overScreen.hidden) {
+      e.preventDefault();
+      startGame();
+    }
+  });
 
   resize();
   mouse.x = width / 2;

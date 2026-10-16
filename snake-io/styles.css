@@ -154,8 +154,10 @@ body {
   animation: screen-fade 0.5s ease-out;
 }
 
-.screen[hidden] {
-  display: none;
+.screen[hidden],
+.hud[hidden],
+.leaderboard[hidden] {
+  display: none !important;
 }
 
 .screen-inner {
