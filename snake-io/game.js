@@ -205,6 +205,7 @@
   }
 
   function setPlayingUI(on) {
+    document.getElementById("app").classList.toggle("playing", on);
     startScreen.hidden = on;
     overScreen.hidden = true;
     hud.hidden = !on;
@@ -213,6 +214,7 @@
 
   function showGameOver(msg) {
     running = false;
+    document.getElementById("app").classList.remove("playing");
     overMessage.textContent = msg;
     finalScoreEl.textContent = String(snakeScore(player));
     overScreen.hidden = false;
